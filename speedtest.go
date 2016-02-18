@@ -32,7 +32,7 @@ func runTest(c *cli.Context) {
 
 	// if we are *not* running a report then say hello to everyone
 	if !debug.REPORT {
-		fmt.Printf("github.com/zpeters/speedtest -- unofficial cli for speedtest.net\n")
+		fmt.Printf("Speedtest Cli\n")
 	}
 
 	// if we are in debug mode print outa an environment report
@@ -41,13 +41,13 @@ func runTest(c *cli.Context) {
 	}
 
 	// get all possible servers
-	if debug.DEBUG {
-		log.Printf("Getting all servers for our test list")
-	}
+	//if debug.DEBUG {
+	//	log.Printf("Getting all servers for our test list")
+	//}
 	var allServers []sthttp.Server
-	if c.String("mini") == "" {
-		allServers = sthttp.GetServers()
-	}
+	//if c.String("mini") == "" {
+	//	allServers = sthttp.GetServers()
+	//}
 
 	// if a mini speedtest installation was specified, use that...
 	if c.String("mini") != "" {
