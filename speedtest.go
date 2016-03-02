@@ -28,7 +28,7 @@ var Version string
 func runTest(c *cli.Context) {
 	// create our server object and load initial config
 	var testServer sthttp.Server
-	sthttp.CONFIG = sthttp.GetConfig()
+	//sthttp.CONFIG = sthttp.GetConfig()
 
 	// if we are *not* running a report then say hello to everyone
 	if !debug.REPORT {
