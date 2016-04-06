@@ -7,12 +7,67 @@ import (
 )
 
 import (
-	"github.com/zpeters/speedtest/debug"
-	"github.com/zpeters/speedtest/misc"
-	"github.com/zpeters/speedtest/print"
-	"github.com/zpeters/speedtest/settings"
-	"github.com/zpeters/speedtest/sthttp"
+	"github.com/pespin/speedtest/debug"
+	"github.com/pespin/speedtest/misc"
+	"github.com/pespin/speedtest/print"
+	"github.com/pespin/speedtest/settings"
+	"github.com/pespin/speedtest/sthttp"
 )
+
+func triggerDwlOverflow(bigurl string) {
+	var dlSpeed float64
+	var beforeSpeed float64
+
+	beforeSpeed = sthttp.DownloadSpeed(bigurl)
+	if debug.DEBUG {
+		log.Printf("Initial download speed: %f mbps", beforeSpeed)
+	}
+
+	for ok := true; ok; {
+		dlSpeed = sthttp.DownloadSpeed(bigurl)
+		if dlSpeed < beforeSpeed {
+			break;
+		} else {
+			if debug.DEBUG {
+				log.Printf("New improved download speed: %f mbps", dlSpeed)
+			}
+			beforeSpeed = dlSpeed
+		}
+	}
+
+	if debug.DEBUG {
+		log.Printf("Final max download speed: %f mbps (it dropped to %f)", beforeSpeed, dlSpeed)
+	}
+
+}
+
+func triggerUplOverflow(server sthttp.Server, bigsize int) {
+	var ulSpeed float64
+	var beforeSpeed float64
+
+	r := misc.Urandom(bigsize)
+	beforeSpeed = sthttp.UploadSpeed(server.URL, "text/xml", r)
+	if debug.DEBUG {
+		log.Printf("Initial upload speed: %f mbps", beforeSpeed)
+	}
+
+	for ok := true; ok; {
+		ulSpeed = sthttp.UploadSpeed(server.URL, "text/xml", r)
+		if ulSpeed < beforeSpeed {
+			break;
+		} else {
+			if debug.DEBUG {
+				log.Printf("New improved upload speed: %f mbps", ulSpeed)
+			}
+			beforeSpeed = ulSpeed
+		}
+	}
+
+	if debug.DEBUG {
+		log.Printf("Final max upload speed: %f mbps (it dropped to %f)", beforeSpeed, ulSpeed)
+	}
+
+}
 
 // DownloadTest will perform the "normal" speedtest download test
 func DownloadTest(server sthttp.Server) float64 {
@@ -35,6 +90,12 @@ func DownloadTest(server sthttp.Server) float64 {
 	if !debug.QUIET && !debug.REPORT {
 		log.Printf("Testing download speed")
 	}
+
+	var bigurl = urls[len(urls)-1]
+	if debug.DEBUG {
+		log.Printf("Downloading some data to trigger overflow (%s)", bigurl)
+	}
+	triggerDwlOverflow(bigurl)
 
 	for u := range urls {
 
@@ -92,6 +153,12 @@ func UploadTest(server sthttp.Server) float64 {
 	if !debug.QUIET && !debug.REPORT {
 		log.Printf("Testing upload speed")
 	}
+
+	var bigsize = ulsizesizes[len(ulsizesizes)-1]
+	if debug.DEBUG {
+		log.Printf("Uploading some data to trigger overflow (size %d)", bigsize)
+	}
+	triggerUplOverflow(server, bigsize)
 
 	for i := 0; i < len(ulsize); i++ {
 		if debug.DEBUG {

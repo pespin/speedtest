@@ -12,9 +12,9 @@ import (
 )
 
 import (
-	"github.com/zpeters/speedtest/debug"
-	"github.com/zpeters/speedtest/settings"
-	"github.com/zpeters/speedtest/sthttp"
+	"github.com/pespin/speedtest/debug"
+	"github.com/pespin/speedtest/settings"
+	"github.com/pespin/speedtest/sthttp"
 )
 
 // Server prints the results in "human" format

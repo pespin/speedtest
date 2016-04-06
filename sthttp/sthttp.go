@@ -12,11 +12,11 @@ import (
 )
 
 import (
-	"github.com/zpeters/speedtest/coords"
-	"github.com/zpeters/speedtest/debug"
-	"github.com/zpeters/speedtest/misc"
-	"github.com/zpeters/speedtest/settings"
-	"github.com/zpeters/speedtest/stxml"
+	"github.com/pespin/speedtest/coords"
+	"github.com/pespin/speedtest/debug"
+	"github.com/pespin/speedtest/misc"
+	"github.com/pespin/speedtest/settings"
+	"github.com/pespin/speedtest/stxml"
 )
 
 // SpeedtestConfigURL is where we pull the global 'config' from speedtest.net
@@ -353,6 +353,9 @@ func DownloadSpeed(url string) float64 {
 		log.Fatalf("Cannot test download speed of '%s' - 'Cannot contact server'\n", url)
 	}
 	defer resp.Body.Close()
+	if checkHTTP(resp) != true {
+		log.Fatalf("Bad HTTP response from server from speedtest.net: '%s'\n", resp.Status)
+	}
 	/*data, err2 := ioutil.ReadAll(resp.Body)
 	if err2 != nil {
 		log.Fatalf("Cannot test download speed of '%s' - 'Cannot read body'\n", url)
@@ -382,6 +385,9 @@ func UploadSpeed(url string, mimetype string, data []byte) float64 {
 		log.Fatalf("Cannot test upload speed of '%s' - 'Cannot contact server'\n", url)
 	}
 	defer resp.Body.Close()
+	if checkHTTP(resp) != true {
+		log.Fatalf("Bad HTTP response from server from speedtest.net: '%s'\n", resp.Status)
+	}
 	_, err2 := ioutil.ReadAll(resp.Body)
 	if err2 != nil {
 		log.Fatalf("Cannot test upload speed of '%s' - 'Cannot read body'\n", url)
